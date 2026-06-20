@@ -4,7 +4,7 @@
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "postCreateCommand": "pip install --upgrade pip kaggle",
+  "postCreateCommand": "pip install --upgrade pip kaggle && (command -v claude >/dev/null 2>&1 && claude plugin marketplace add obra/superpowers-marketplace && claude plugin install superpowers@superpowers-marketplace || echo 'claude CLI not found; Superpowers loads via .claude/settings.json')",
   "remoteEnv": {
     "PYTHONUNBUFFERED": "1"
   }
