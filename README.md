@@ -17,14 +17,20 @@ Kaggle 実験リポジトリ — **AI Agent Security: Multi-Step Tool Attacks**�
 - 認証情報（`kaggle.json`）はコミットしない（`.gitignore` 済み）。
 
 ## セットアップ（データ取得）
+> 注: Claude Code on the web には専用シークレット保管庫が無く、環境変数はその環境を
+> 編集できる人に見える。Kaggle トークンは随時ローテート可能な前提で扱う。
+
 1. Kaggle UI でコンペのルールに同意（Join）。
    <https://www.kaggle.com/competitions/ai-agent-security-multi-step-tool-attacks>
-2. Kaggle の Settings → API → Create New API Token を発行（`username` と `key`）。
-3. Claude Code on the web の環境設定で、環境シークレットを登録:
-   - `KAGGLE_USERNAME`
-   - `KAGGLE_KEY`
-4. 環境のセットアップスクリプトに `pip install --upgrade kaggle` を追加（各セッションで CLI を用意）。
-5. 新規セッション開始後、データ/SDK を取得:
+2. Kaggle の Settings → API → **Generate New Token** を発行（`KGAT_...` 形式）。
+3. Claude Code on the web の環境設定（クラウドアイコン → 環境 → 設定）で:
+   - **Network access** → **Custom** →「Also include default list...」にチェック →
+     Allowed domains に `*.kaggle.com` を追加（`storage.googleapis.com` は既定で許可済み）。
+   - **Environment variables**（`.env` 形式・引用符なし）に
+     `KAGGLE_API_TOKEN=KGAT_...` を登録。
+   - **Setup script** に `pip install --upgrade kaggle` を追加。
+4. 設定を保存し、**新規セッションを開始**（ネットワーク/環境変数は再起動で反映）。
+5. データ/SDK を取得:
    ```bash
    bash scripts/fetch_data.sh
    ```
