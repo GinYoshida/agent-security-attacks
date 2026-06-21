@@ -206,6 +206,16 @@ class SearchEngine:
 
 
 # --- attack_src.py ---
+"""Competition attack adapter (Go-Explore engine).
+
+CALIBRATION-PHASE SCAFFOLD — NOT a scoring submission yet.
+The active policy is the mock-only ActionPolicy, whose `CALL <tool> ...`
+directives only steer the local SteerableMockAgent. Against the real
+gpt-oss-20b agent these emit no tool calls, so the evaluator discards every
+finding (score ~0). This bundle validates the engine/replay/harness only.
+To make a scoring submission: wire NLActionPolicy (src/recipes/nl_policy.py)
+into the engine and calibrate it against the real agent via Kaggle.
+"""
 
 from collections.abc import Mapping
 from typing import Any
