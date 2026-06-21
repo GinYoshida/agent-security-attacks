@@ -1,8 +1,9 @@
+import pytest
 from aicomp_sdk.guardrails.base import DecisionAction
 from aicomp_sdk.guardrails.optimal import Guardrail as Optimal
 from aicomp_sdk.core.predicates import eval_predicates
 from src.local.env_factory import build_env
-from src.recipes.evasion import clean_exfil_message, is_keyword_clean
+from src.recipes.evasion import clean_exfil_message, is_keyword_clean, GUARDRAIL_KEYWORDS
 
 def test_optimal_deny_rules():
     g = Optimal()
@@ -26,3 +27,14 @@ def test_clean_exfil_message_lands_under_optimal_with_mock():
     tr = env.export_trace_dict()
     assert tr["tool_events"][-1]["ok"] is True
     assert any(p["predicate"] == "EXFILTRATION" for p in eval_predicates(tr))
+
+def test_is_keyword_clean_positive_and_negative():
+    assert is_keyword_clean("hello world drop42") is True
+    for kw in GUARDRAIL_KEYWORDS:
+        assert is_keyword_clean(f"x {kw} y") is False
+
+def test_clean_exfil_message_rejects_dirty_url_and_token():
+    with pytest.raises(ValueError):
+        clean_exfil_message(url="http://x/secret")
+    with pytest.raises(ValueError):
+        clean_exfil_message(token="api_key=1")
