@@ -2,6 +2,7 @@ from __future__ import annotations
 import random
 from aicomp_sdk.attacks.contracts import AttackCandidate, AttackRunConfig
 from aicomp_sdk.core.cells import cell_signature
+from aicomp_sdk.core.env.api import AttackEnvProtocol
 from aicomp_sdk.core.predicates import eval_predicates
 from aicomp_sdk.utils.timebox import Timebox
 from src.engine.archive import ArchiveStore, Exemplar
@@ -27,7 +28,7 @@ class SearchEngine:
             user_messages=tr.get("user_messages", []),
         )["hash"])
 
-    def run(self, env, config: AttackRunConfig) -> list[AttackCandidate]:
+    def run(self, env: AttackEnvProtocol, config: AttackRunConfig) -> list[AttackCandidate]:
         rng = random.Random(env.seed)
         tb = Timebox(float(config.time_budget_s))
 
