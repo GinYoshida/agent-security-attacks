@@ -1,0 +1,7 @@
+# Local dev/test deps for the attack engine (no torch needed).
+# Run tests with: pytest   (pytest.ini sets pythonpath = . vendor/aicomp_pkg)
+# If pytest runs in an isolated uv tool venv:
+#   uv tool install pytest --with pydantic --with gymnasium
+pydantic>=2
+gymnasium>=0.29,<1
+pytest>=7
