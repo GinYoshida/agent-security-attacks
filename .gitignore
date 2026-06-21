@@ -4,6 +4,9 @@ kaggle.json
 data/
 *.csv.zip
 
+# SDK（zip から展開した作業コピー。zip 本体のみ追跡する）
+vendor/
+
 # Python
 __pycache__/
 *.py[cod]
