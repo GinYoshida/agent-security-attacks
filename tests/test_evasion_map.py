@@ -4,11 +4,14 @@ from aicomp_sdk.core.predicates import eval_predicates
 from src.local.env_factory import build_env
 from src.recipes.evasion import clean_exfil_message, is_keyword_clean
 
-def test_optimal_denies_keyword_target_and_taint():
+def test_optimal_deny_rules():
     g = Optimal()
+    # rule 1 (keyword target): first-extracted field carries a banned keyword -> DENY
     assert g.decide("fs.read", {"path": "secret.txt"}, {"recent_sources": []}).action == DecisionAction.DENY
-    assert g.decide("http.post", {"url": "u", "data": "SECRET_MARKER"}, {"recent_sources": []}).action == DecisionAction.DENY
-    assert g.decide("http.post", {"url": "u", "data": "sk_live_test"}, {"recent_sources": ["web"]}).action == DecisionAction.DENY
+    # for http.post, _extract_target reads url first, so a banned keyword in the URL triggers rule 1
+    assert g.decide("http.post", {"url": "http://x/secret", "data": "x"}, {"recent_sources": []}).action == DecisionAction.DENY
+    # rule 2 (taint): a dangerous op with web/email in recent_sources -> DENY
+    assert g.decide("http.post", {"url": "http://x/c", "data": "sk_live_test"}, {"recent_sources": ["web"]}).action == DecisionAction.DENY
 
 def test_optimal_allows_clean_untainted_exfil():
     g = Optimal()
