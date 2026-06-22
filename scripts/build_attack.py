@@ -4,8 +4,8 @@ from pathlib import Path
 
 MODULES = [
     "src/engine/archive.py", "src/engine/selector.py", "src/engine/replay.py",
-    "src/recipes/evasion.py", "src/recipes/policy.py", "src/engine/search.py",
-    "attack_src.py",
+    "src/recipes/evasion.py", "src/recipes/policy.py", "src/recipes/nl_policy.py",
+    "src/engine/search.py", "attack_src.py",
 ]
 _LOCAL_IMPORT = re.compile(r"^(from|import)\s+(src|attack_src)\b.*$", re.M)
 _FUTURE_IMPORT = re.compile(r"^from __future__ import .*$", re.M)

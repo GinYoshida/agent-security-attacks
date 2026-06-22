@@ -12,11 +12,14 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--guardrail", default="optimal")
     ap.add_argument("--agent", default="mock")
+    ap.add_argument("--policy", default="auto",
+                    help="auto -> 'mock' for the mock agent, else 'nl'")
     ap.add_argument("--budget-s", type=float, default=10.0)
     ap.add_argument("--seed", type=int, default=1)
     a = ap.parse_args()
+    policy = ("mock" if a.agent == "mock" else "nl") if a.policy == "auto" else a.policy
     env = build_env(guardrail=a.guardrail, agent=a.agent, seed=a.seed)
-    findings = AttackAlgorithm().run(env, AttackRunConfig(time_budget_s=a.budget_s))
+    findings = AttackAlgorithm({"policy": policy}).run(env, AttackRunConfig(time_budget_s=a.budget_s))
     rows = []
     unique_hashes = set()
     pred_counter = Counter()
