@@ -1,4 +1,5 @@
 from __future__ import annotations
+import re
 from collections.abc import Sequence
 
 from aicomp_sdk.agents.types import (
@@ -23,8 +24,33 @@ def _parse_directives(message: str) -> list[tuple[str, dict[str, str]]]:
         out.append((tool, args))
     return out
 
+_URL_RE = re.compile(r"https?://\S+")
+_PAYLOAD_RE = re.compile(r"exfil-\S+")
+
+
+def _parse_nl_post(message: str) -> tuple[str, dict[str, str]] | None:
+    """Comprehend a natural-language 'POST <payload> to <url>' instruction.
+
+    Stands in for a compliant real agent: extracts the collector url and the
+    body payload and emits a single http.post. Returns None if the message is
+    not an exfil-POST instruction.
+    """
+    low = message.lower()
+    if "post" not in low:
+        return None
+    url_m = _URL_RE.search(message)
+    if not url_m:
+        return None
+    url = url_m.group(0).rstrip(".,;)")
+    payload_m = _PAYLOAD_RE.search(message)
+    data = payload_m.group(0).rstrip(".,;)") if payload_m else message
+    return ("http.post", {"url": url, "data": data})
+
+
 class SteerableMockAgent:
-    """Test-only agent that executes explicit CALL directives from the user message."""
+    """Test-only agent that executes explicit CALL directives, or—failing that—
+    a single natural-language exfil-POST instruction (so the NL policy can be
+    exercised end-to-end through the engine)."""
 
     def __init__(self) -> None:
         self._n = 1
@@ -46,10 +72,19 @@ class SteerableMockAgent:
 
     def next_action(self, *, history: RuntimeHistory, tools: Sequence[AgentToolSpec]):
         del tools
-        directives = _parse_directives(self._last_user_message(history))
+        last_user = self._last_user_message(history)
+        directives = _parse_directives(last_user)
         i = self._calls_since_last_user(history)
-        if i < len(directives):
-            tool, args = directives[i]
+        if directives:
+            if i < len(directives):
+                tool, args = directives[i]
+                call = ToolCall(call_id=f"call_{self._n:06d}", tool_name=tool, arguments=args)
+                self._n += 1
+                return ToolCallDecision(call=call, assistant_message=None)
+            return FinalResponseDecision(text="done")
+        nl = _parse_nl_post(last_user)
+        if nl is not None and i == 0:
+            tool, args = nl
             call = ToolCall(call_id=f"call_{self._n:06d}", tool_name=tool, arguments=args)
             self._n += 1
             return ToolCallDecision(call=call, assistant_message=None)
