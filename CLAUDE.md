@@ -1,6 +1,13 @@
-## agent-security-attacks 固有ルール
+# 共通ルール（個人プリファレンス）
 
-<!-- 中身は後で埋める。以下は Kaggle 運用の最小メモのみ。 -->
+<!--
+claude-md リポジトリを claude-shared として submodule 参照し、単一の真実源とする。
+別環境/別セッションで submodule 未取得だと下記 import は無言でスキップされるため、
+.claude/settings.json の SessionStart フックで `git submodule update --init` を自動実行している。
+-->
+@claude-shared/CLAUDE.md
+
+## agent-security-attacks 固有ルール
 
 ### プロジェクト概要
 - Kaggle: AI Agent Security - Multi-Step Tool Attacks（OpenAI 主催 Code Competition）
@@ -15,5 +22,3 @@
 - Superpowers プラグインは `.claude/settings.json` の `enabledPlugins` で有効化している
 - 各環境（ローカル / Codespaces / Claude Code on the web）の初回セッションで
   ワークスペース信頼の確認ダイアログが一度だけ出る場合がある（リポジトリ側では抑止不可）
-
-<!-- 共通ルール（claude-shared submodule）の組み込みは一旦保留。後日方針確定後に追記する。 -->

@@ -1,0 +1,4 @@
+[submodule "claude-shared"]
+	path = claude-shared
+	url = https://github.com/GinYoshida/claude-md.git
+	branch = main
