@@ -9,9 +9,18 @@ security report) is done manually from an environment with access to that reposi
 | File | Track | Upstream target | Status |
 | ---- | ----- | --------------- | ------ |
 | `SECURITY.md` | Short-term | New file at repo root (public PR) | Ready for review |
+| `pr-cover-note.md` | Short-term | PR description for the `SECURITY.md` PR | Ready for review |
 | `issue-1480-proposal.md` | Short-term | Comment/PR on [#1480](https://github.com/obra/superpowers/issues/1480) | Ready for review |
 | `skill-injection-propagation-disclosure.md` | Mid-term | **Private** security report | **HOLD** until `SECURITY.md` merged |
 | `skills/data-verification-before-modeling/SKILL.md` | Mid-term | New skill PR | Draft |
+
+### SECURITY.md design intent (low burden for a near-solo maintainer)
+
+The policy is written to *reduce* maintainer load, not add it:
+no SLA (best-effort only), no bounty (deters beg-bounty / AI-slop), reproduction required
+(front-door filter), contact routed to GitHub private reporting + an org address rather than
+personal mentions, and a scope that excludes host-agent bugs, opt-out telemetry, and raw
+scanner output. `pr-cover-note.md` explains this framing to the maintainer when submitting.
 
 ## Suggested sequencing
 
